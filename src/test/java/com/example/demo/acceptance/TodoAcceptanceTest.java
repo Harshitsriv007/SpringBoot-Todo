@@ -10,24 +10,39 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest // Starts the entire Spring context for testing
-@AutoConfigureMockMvc // Injects MockMvc for simulating HTTP requests
+@SpringBootTest
+@AutoConfigureMockMvc
 class TodoAcceptanceTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void testCreateAndListTodo() throws Exception {
-        // Create a TODO
+    private void createTodo(int id, String content) throws Exception {
         mockMvc.perform(post("/todos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"id\": 1, \"content\": \"Sample TODO\" }"))
+                .content(String.format("{ \"id\": %d, \"content\": \"%s\" }", id, content)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.content").value("Sample TODO"));
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.content").value(content));
+    }
 
-        // List TODOs
+    private void updateTodo(int id, String content) throws Exception {
+        mockMvc.perform(patch("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(String.format("{ \"id\": %d, \"content\": \"%s\" }", id, content)))
+                .andExpect(status().isOk());
+    }
+
+    private void deleteTodo(int id) throws Exception {
+        mockMvc.perform(delete("/todos/" + id))
+                .andExpect(status().isOk())
+                .andExpect(content().string("removed todo :" + id));
+    }
+
+    @Test
+    void testCreateAndListTodo() throws Exception {
+        createTodo(1, "Sample TODO");
+
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
@@ -36,19 +51,10 @@ class TodoAcceptanceTest {
 
     @Test
     void testUpdateTodo() throws Exception {
-        // Create a TODO
-        mockMvc.perform(post("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"id\": 1, \"content\": \"Sample TODO\" }"))
-                .andExpect(status().isOk());
+        createTodo(1, "Sample TODO");
 
-        // Update the TODO
-        mockMvc.perform(patch("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"id\": 1, \"content\": \"Updated TODO\" }"))
-                .andExpect(status().isOk());
+        updateTodo(1, "Updated TODO");
 
-        // Verify the update
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].content").value("Updated TODO"));
@@ -56,18 +62,10 @@ class TodoAcceptanceTest {
 
     @Test
     void testDeleteTodo() throws Exception {
-        // Create a TODO
-        mockMvc.perform(post("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"id\": 1, \"content\": \"Sample TODO\" }"))
-                .andExpect(status().isOk());
+        createTodo(1, "Sample TODO");
 
-        // Delete the TODO
-        mockMvc.perform(delete("/todos/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("removed todo :1"));
+        deleteTodo(1);
 
-        // Verify deletion
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
