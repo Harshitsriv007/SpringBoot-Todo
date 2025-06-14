@@ -117,34 +117,32 @@ Before you begin, ensure you have the following installed:
   ```
 
 ---
+## Testing
 
-Testing
+### Prerequisites
 
-Prerequisites
+- Ensure `spring-boot-starter-test` is included in the dependencies.
+- Add Mockito for mocking dependencies.
 
-Ensure spring-boot-starter-test is included in the dependencies.
+### Running Tests
 
-Add Mockito for mocking dependencies.
+1. Execute the test suite:
 
-Running Tests
+   ```bash
+   mvn test
+   ```
 
-Execute the test suite:
+2. Verify the results in the `target/surefire-reports` directory.
 
-mvn test
+### Writing Tests
 
-Verify the results in the target/surefire-reports directory.
-
-Writing Tests
-
-Use JUnit 5 for test cases.
-
-Mock dependencies using Mockito.
-
-Include meaningful test case names to describe their purpose.
+- Use JUnit 5 for test cases.
+- Mock dependencies using Mockito.
+- Include meaningful test case names to describe their purpose.
 
 Example test case:
 
-```plaintext
+```java
 @Test
 void testCreateTodo() throws Exception {
     mockMvc.perform(post("/todos")
