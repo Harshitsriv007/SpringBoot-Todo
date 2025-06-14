@@ -117,6 +117,7 @@ Before you begin, ensure you have the following installed:
   ```
 
 ---
+
 ## Testing
 
 ### Prerequisites
@@ -140,6 +141,10 @@ Before you begin, ensure you have the following installed:
 - Mock dependencies using Mockito.
 - Include meaningful test case names to describe their purpose.
 
+### Unit Tests
+
+Unit tests focus on testing individual components like services or controllers in isolation.
+
 Example test case:
 
 ```java
@@ -152,6 +157,86 @@ void testCreateTodo() throws Exception {
             .andExpect(jsonPath("$.content").value("Sample TODO"));
 }
 ```
+
+### Acceptance Tests
+
+Acceptance tests validate the system's end-to-end functionality, either using an in-memory database or a real database.
+
+#### In-Memory Database Method
+
+- Use an H2 in-memory database for isolated and fast acceptance tests.
+- Configure `application-test.properties`:
+
+  ```properties
+  spring.datasource.url=jdbc:h2:mem:testdb
+  spring.datasource.driver-class-name=org.h2.Driver
+  spring.datasource.username=sa
+  spring.datasource.password=
+  spring.jpa.hibernate.ddl-auto=create-drop
+  spring.datasource.initialization-mode=always
+  ```
+
+- Example:
+
+  ```java
+  @SpringBootTest
+  @AutoConfigureMockMvc
+  class TodoAcceptanceTest {
+
+      @Autowired
+      private MockMvc mockMvc;
+
+      @Test
+      void testFullWorkflow() throws Exception {
+          mockMvc.perform(post("/todos")
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content("{ \"id\": 1, \"content\": \"Test TODO\" }"))
+                  .andExpect(status().isOk());
+
+          mockMvc.perform(get("/todos"))
+                  .andExpect(status().isOk())
+                  .andExpect(jsonPath("$[0].content").value("Test TODO"));
+      }
+  }
+  ```
+
+#### Real Database Method
+
+- Use a separate MySQL test database for more realistic acceptance tests.
+- Configure `application-test.properties`:
+
+  ```properties
+  spring.datasource.url=jdbc:mysql://localhost:3306/test_db
+  spring.datasource.username=test_user
+  spring.datasource.password=test_password
+  spring.jpa.hibernate.ddl-auto=create-drop
+  ```
+
+- Set up a test database (`test_db`) with appropriate user permissions before running tests.
+- Example:
+
+  ```java
+  @SpringBootTest
+  @AutoConfigureMockMvc
+  @TestPropertySource(locations = "classpath:application-test.properties")
+  class TodoAcceptanceTest {
+
+      @Autowired
+      private MockMvc mockMvc;
+
+      @Test
+      void testFullWorkflow() throws Exception {
+          mockMvc.perform(post("/todos")
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content("{ \"id\": 1, \"content\": \"Test TODO\" }"))
+                  .andExpect(status().isOk());
+
+          mockMvc.perform(get("/todos"))
+                  .andExpect(status().isOk())
+                  .andExpect(jsonPath("$[0].content").value("Test TODO"));
+      }
+  }
+  ```
 
 ---
 
