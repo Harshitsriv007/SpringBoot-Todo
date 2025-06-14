@@ -4,10 +4,10 @@ A simple Spring Boot application that demonstrates a RESTful API for managing TO
 
 ## Features
 
-* **Create TODO**: Add a new TODO item.
-* **List TODOs**: Retrieve a list of all TODO items.
-* **Update TODO**: Update the content of an existing TODO.
-* **Delete TODO**: Remove a TODO by its ID.
+- **Create TODO**: Add a new TODO item.
+- **List TODOs**: Retrieve a list of all TODO items.
+- **Update TODO**: Update the content of an existing TODO.
+- **Delete TODO**: Remove a TODO by its ID.
 
 ---
 
@@ -15,9 +15,9 @@ A simple Spring Boot application that demonstrates a RESTful API for managing TO
 
 Before you begin, ensure you have the following installed:
 
-* Java 8 or later
-* Maven 3.6+
-* A code editor (e.g., IntelliJ IDEA, VS Code)
+- Java 8 or later
+- Maven 3.6+
+- A code editor (e.g., IntelliJ IDEA, VS Code)
 
 ---
 
@@ -51,68 +51,108 @@ Before you begin, ensure you have the following installed:
 
 ### Create a TODO
 
-* **URL**: `POST /todos`
-* **Request Body**:
+- **URL**: `POST /todos`
+- **Request Body**:
 
   ```json
   {
-      "id": 1,
-      "content": "Learn Spring Boot"
+    "id": 1,
+    "content": "Learn Spring Boot"
   }
   ```
-* **Response**:
+
+- **Response**:
 
   ```json
   {
-      "id": 1,
-      "content": "Learn Spring Boot"
+    "id": 1,
+    "content": "Learn Spring Boot"
   }
   ```
 
 ### List All TODOs
 
-* **URL**: `GET /todos`
-* **Response**:
+- **URL**: `GET /todos`
+- **Response**:
 
   ```json
   [
-      {
-          "id": 1,
-          "content": "Learn Spring Boot"
-      }
+    {
+      "id": 1,
+      "content": "Learn Spring Boot"
+    }
   ]
   ```
 
 ### Update a TODO
 
-* **URL**: `PATCH /todos`
-* **Request Body**:
+- **URL**: `PATCH /todos`
+- **Request Body**:
 
   ```json
   {
-      "id": 1,
-      "content": "Master Spring Boot"
+    "id": 1,
+    "content": "Master Spring Boot"
   }
   ```
-* **Response**:
+
+- **Response**:
 
   ```json
   [
-      {
-          "id": 1,
-          "content": "Master Spring Boot"
-      }
+    {
+      "id": 1,
+      "content": "Master Spring Boot"
+    }
   ]
   ```
 
 ### Delete a TODO
 
-* **URL**: `DELETE /todos/{id}`
-* **Response**:
+- **URL**: `DELETE /todos/{id}`
+- **Response**:
 
   ```plaintext
   Removed TODO with ID: 1
   ```
+
+---
+
+## Testing
+
+### Prerequisites
+
+- Ensure `spring-boot-starter-test` is included in the dependencies.
+- Add Mockito for mocking dependencies.
+
+### Running Tests
+
+1. Execute the test suite:
+
+   ```bash
+   mvn test
+   ```
+
+2. Verify the results in the `target/surefire-reports` directory.
+
+### Writing Tests
+
+- Use JUnit 5 for test cases.
+- Mock dependencies using Mockito.
+- Include meaningful test case names to describe their purpose.
+
+Example test case:
+
+```java
+@Test
+void testCreateTodo() throws Exception {
+    mockMvc.perform(post("/todos")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{ \"id\": 1, \"content\": \"Sample TODO\" }"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content").value("Sample TODO"));
+}
+```
 
 ---
 
@@ -130,10 +170,10 @@ src/main/java/com/example/demo/
 
 ## Technologies Used
 
-* **Java 8+**
-* **Spring Boot**
-* **Maven**
-* **RESTful API**
+- **Java 8+**
+- **Spring Boot**
+- **Maven**
+- **RESTful API**
 
 ---
 
@@ -159,8 +199,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 If you have any questions or feedback, feel free to reach out:
 
-* **Author**: Harshit Srivastava
-* **Email**: [harshit.srivastv726@gmail.com](mailto:harshit.srivastv726@gmail.com)
-* **GitHub**: [Harshitsriv007](https://github.com/Harshitsriv007)
+- **Author**: Harshit Srivastava
+- **Email**: [harshit.srivastv726@gmail.com](mailto:harshit.srivastv726@gmail.com)
+- **GitHub**: [Harshitsriv007](https://github.com/Harshitsriv007)
 
 ---
