@@ -45,6 +45,6 @@ public class TodoController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Integer id) { // Changed @PathParam to @PathVariable
         todoService.removeTodo(id);
-        return "Removed TODO with ID: " + id;
+        return "removed todo :" + id;
     }
 }
