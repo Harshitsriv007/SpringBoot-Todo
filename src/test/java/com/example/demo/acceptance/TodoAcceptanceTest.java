@@ -1,48 +1,18 @@
 package com.example.demo.acceptance;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class TodoAcceptanceTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    private void createTodo(int id, String content) throws Exception {
-        mockMvc.perform(post("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(String.format("{ \"id\": %d, \"content\": \"%s\" }", id, content)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.content").value(content));
-    }
-
-    private void updateTodo(int id, String content) throws Exception {
-        mockMvc.perform(patch("/todos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(String.format("{ \"id\": %d, \"content\": \"%s\" }", id, content)))
-                .andExpect(status().isOk());
-    }
-
-    private void deleteTodo(int id) throws Exception {
-        mockMvc.perform(delete("/todos/" + id))
-                .andExpect(status().isOk())
-                .andExpect(content().string("removed todo :" + id));
-    }
+class TodoAcceptanceTest extends MainAcceptanceTest {
 
     @Test
     void testCreateAndListTodo() throws Exception {
+        // Use shared create method
         createTodo(1, "Sample TODO");
 
+        // List TODOs
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
@@ -51,10 +21,13 @@ class TodoAcceptanceTest {
 
     @Test
     void testUpdateTodo() throws Exception {
+        // Use shared create method
         createTodo(1, "Sample TODO");
 
+        // Use shared update method
         updateTodo(1, "Updated TODO");
 
+        // Verify the update
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].content").value("Updated TODO"));
@@ -62,10 +35,13 @@ class TodoAcceptanceTest {
 
     @Test
     void testDeleteTodo() throws Exception {
+        // Use shared create method
         createTodo(1, "Sample TODO");
 
+        // Use shared delete method
         deleteTodo(1);
 
+        // Verify deletion
         mockMvc.perform(get("/todos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
